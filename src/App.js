@@ -7,6 +7,8 @@ import { useFeedback } from "./hooks/useFeedback";
 import { useScrollTo } from "./hooks/useScrollTo";
 import { useTheme } from "./hooks/useTheme";
 
+import "./App.css";
+
 function App() {
   const { feedback, leaveFeedback, total, positivePercentage } = useFeedback();
   const { ref, scrollToRef } = useScrollTo();
@@ -14,10 +16,12 @@ function App() {
 
   return (
     <div className={`container ${theme}`}>
-      <button onClick={toggleTheme}>Змінити тему</button>
-      <button onClick={scrollToRef} style={{ marginLeft: "10px" }}>
-        Перейти до статистики
-      </button>
+      <div style={{ marginBottom: "20px" }}>
+        <button onClick={toggleTheme}>Змінити тему</button>
+        <button onClick={scrollToRef} style={{ marginLeft: "10px" }}>
+          Перейти до статистики
+        </button>
+      </div>
 
       <Section title="Залиште свій відгук">
         <FeedbackOptions
@@ -37,7 +41,7 @@ function App() {
               positivePercentage={positivePercentage}
             />
           ) : (
-            <Notification message="There is no feedback" />
+            <Notification message="Немає відгуків" />
           )}
         </div>
       </Section>
