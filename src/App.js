@@ -1,54 +1,45 @@
-import { useState } from "react";
 import Section from "./components/Section";
 import FeedbackOptions from "./components/FeedbackOptions";
 import Statistics from "./components/Statistics";
 import Notification from "./components/Notification";
 
+import { useFeedback } from "./hooks/useFeedback";
+import { useScrollTo } from "./hooks/useScrollTo";
+import { useTheme } from "./hooks/useTheme";
+
 function App() {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
-
-  const handleLeaveFeedback = (type) => {
-    setFeedback((prev) => ({
-      ...prev,
-      [type]: prev[type] + 1,
-    }));
-  };
-
-  const countTotalFeedback = () =>
-    feedback.good + feedback.neutral + feedback.bad;
-
-  const countPositiveFeedbackPercentage = () => {
-    const total = countTotalFeedback();
-    return total === 0 ? 0 : Math.round((feedback.good / total) * 100);
-  };
-
-  const total = countTotalFeedback();
+  const { feedback, leaveFeedback, total, positivePercentage } = useFeedback();
+  const { ref, scrollToRef } = useScrollTo();
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="container">
+    <div className={`container ${theme}`}>
+      <button onClick={toggleTheme}>Змінити тему</button>
+      <button onClick={scrollToRef} style={{ marginLeft: "10px" }}>
+        Перейти до статистики
+      </button>
+
       <Section title="Залиште свій відгук">
         <FeedbackOptions
           options={Object.keys(feedback)}
-          onLeaveFeedback={handleLeaveFeedback}
+          onLeaveFeedback={leaveFeedback}
         />
       </Section>
 
       <Section title="Статистика">
-        {total > 0 ? (
-          <Statistics
-            good={feedback.good}
-            neutral={feedback.neutral}
-            bad={feedback.bad}
-            total={total}
-            positivePercentage={countPositiveFeedbackPercentage()}
-          />
-        ) : (
-          <Notification message="There is no feedback" />
-        )}
+        <div ref={ref}>
+          {total > 0 ? (
+            <Statistics
+              good={feedback.good}
+              neutral={feedback.neutral}
+              bad={feedback.bad}
+              total={total}
+              positivePercentage={positivePercentage}
+            />
+          ) : (
+            <Notification message="There is no feedback" />
+          )}
+        </div>
       </Section>
     </div>
   );
